@@ -34,7 +34,7 @@ namespace TwitterGraph {
             TwitterAPI twitterAPI = new TwitterAPI();
             //twitterAPI.searchFor("dlmnbvcfgyuimnbvfgyuinvcfknbvfasdiagsdiuagf91gr97g", 10);
             //twitterAPI.searchFor("twitterapi", 1);
-            twitterAPI.searchFor("wonder woman", 200);
+            twitterAPI.searchFor("marvel", 200);
 
         }
     }

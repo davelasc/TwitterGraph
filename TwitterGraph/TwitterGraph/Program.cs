@@ -31,10 +31,14 @@ namespace TwitterGraph {
         }
 
         private static void TestTwitterConnection() {
-            TwitterAPI twitterAPI = new TwitterAPI();
             //twitterAPI.searchFor("dlmnbvcfgyuimnbvfgyuinvcfknbvfasdiagsdiuagf91gr97g", 10);
             //twitterAPI.searchFor("twitterapi", 1);
-            twitterAPI.searchFor("marvel", 200);
+            for(int i = 5; i <= 200000; i *=2) {
+                TwitterAPI twitterAPI = new TwitterAPI();
+                twitterAPI.searchFor("marvel", i);
+                Console.ReadKey();
+            }
+                
 
         }
     }

@@ -35,7 +35,7 @@ namespace TwitterGraph.Helpers {
         public bool createJSonFile(string commentContent) {
 
             try {
-                Console.WriteLine("Creating the twitter.json file");
+                /*Console.WriteLine("Creating the twitter.json file");
                 string path = ConfigurationManager.AppSettings["DATA_PATH"].ToString();
 
                 if(File.Exists(path)) {
@@ -43,12 +43,12 @@ namespace TwitterGraph.Helpers {
                 }
 
                 fs = File.Create(path);
-
+                /**/
                 Console.WriteLine("Setting clusters");
                 if (!setCluster())
                     return false;
 
-                Console.WriteLine("Adding the search criteria in the comment section");
+                /*Console.WriteLine("Adding the search criteria in the comment section");
                 if (!this.writeToFile("{\"comment\":\"" + commentContent + "\""))
                     return false;
                 
@@ -84,7 +84,7 @@ namespace TwitterGraph.Helpers {
                     return false;
 
                 if (!this.writeToFile("}"))
-                    return false;
+                    return false;/**/
 
                 return true;
 
@@ -156,6 +156,11 @@ namespace TwitterGraph.Helpers {
                 //Setting the stage
                 List<string> pendingToProcess = new List<string>();
                 int cluster = 0;
+                int tweetsAgregados = 0;
+                int tweetsProcesados = 0;
+                int usuariosProcesados = 0;
+                DateTime start = DateTime.Now;
+
                 foreach(string tweetID in tweetUniverse.Keys) {
                     if (tweetUniverse[tweetID].process)
                         continue;
@@ -166,23 +171,36 @@ namespace TwitterGraph.Helpers {
                     while(pendingToProcess.Count() > 0) {
                         string currentID = pendingToProcess[0];
                         pendingToProcess.RemoveAt(0);
-
+                        tweetsAgregados++;
                         if (tweetUniverse[currentID].process)
                             continue;
-
+                        tweetsProcesados++;
                         tweetUniverse[currentID].cluster = cluster;
                         tweetUniverse[currentID].process = true;
 
                         string creatorID = tweetUniverse[currentID].createdBy;
-                        userUniverse[creatorID].cluster = cluster;
-                        List<string> tempList = userUniverse[creatorID].mentionedIn;
-                        if(tempList.Count() > 0)
-                            pendingToProcess.AddRange(tempList);
 
+                        List<string> tempList = userUniverse[creatorID].mentionedIn;
+                        
+                        if (!userUniverse[creatorID].process) {
+                            userUniverse[creatorID].process = true;
+                            userUniverse[creatorID].cluster = cluster;
+
+                            if (tempList.Count() > 0)
+                                pendingToProcess.AddRange(tempList);
+
+                            usuariosProcesados++;
+                        }
+                        
                         string[] usersMentioned = tweetUniverse[currentID].mentions;
                         if(usersMentioned != null) {
                             foreach (string userMentionedID in usersMentioned) {
+                                if (userUniverse[userMentionedID].process)
+                                    continue;
+                                usuariosProcesados++;
                                 userUniverse[userMentionedID].cluster = cluster;
+                                userUniverse[userMentionedID].process = true;
+
                                 tempList = userUniverse[userMentionedID].created;
                                 if (tempList.Count() > 0)
                                     pendingToProcess.AddRange(tempList);
@@ -193,7 +211,14 @@ namespace TwitterGraph.Helpers {
                         }
                     }
                 }
-                createHexTable(cluster);
+
+                DateTime end = DateTime.Now;
+                Console.WriteLine("Time passed: " + end.Subtract(start).Milliseconds);
+                Console.WriteLine("Tweets totales: " + tweetUniverse.Count() + ", Usuarios totales: " + userUniverse.Count());
+                Console.WriteLine("Tweets agregados: " + tweetsAgregados + " procesados: " + tweetsProcesados);
+                Console.WriteLine("Usuarios que fueron procesados: " + usuariosProcesados);
+                
+                //createHexTable(cluster);
                  return true;
             }catch(Exception e) {
                 Console.WriteLine(e.Message);

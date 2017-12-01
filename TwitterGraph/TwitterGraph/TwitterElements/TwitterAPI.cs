@@ -78,7 +78,8 @@ namespace TwitterGraph.TwitterElements {
             int MAX_COUNTER = 100;
 
             for(int i = maxCount; i >= 0; i-=MAX_COUNTER) {
-                Console.WriteLine(string.Format("i: {0}, maxCount = {1}", i, maxCount));
+                //Console.WriteLine(string.Format("i: {0}, maxCount = {1}", i, maxCount));
+                Console.Write("i: {0} |||||", i);
                 string request = "https://api.twitter.com/1.1/search/tweets.json?q=";
                 int count = i > 100 ? MAX_COUNTER : i;
                 if (i == maxCount) {
@@ -92,7 +93,7 @@ namespace TwitterGraph.TwitterElements {
                 searchRequest.ContentType = "application/json; charset=utf-8";
                 searchRequest.Accept = "application/json";
                 searchRequest.Headers[HttpRequestHeader.Authorization] = "Bearer " + this.TWITTER_ACCESS_TOKEN;
-                Console.WriteLine("Haciendo el request a Twitter...");
+                //Console.WriteLine("Haciendo el request a Twitter...");
                 try {
                     string respbody = null;
                     using (var resp = searchRequest.GetResponse().GetResponseStream())//there request sends
@@ -104,7 +105,7 @@ namespace TwitterGraph.TwitterElements {
 
                     if (!parser.wasSearchSuccessfull())
                         return false;
-                    Console.WriteLine("Conseguí los nuevos elementos....");
+                    //Console.WriteLine("Conseguí los nuevos elementos....");
                     if (!insertTwitterDataIntoDatabase())
                         return false;
                     //parser.printFullResult();
@@ -121,7 +122,7 @@ namespace TwitterGraph.TwitterElements {
             
             /*Console.WriteLine("Agregando nuevo elementos a la base de datos...");
             if (!dumpTweetsToDB())
-                return false;*/
+                return false;/**/
 
             Console.WriteLine("Creando el archivo de twitter.json");
             if (!createTwitterJsonFile(search))

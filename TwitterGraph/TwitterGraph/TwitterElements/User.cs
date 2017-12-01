@@ -19,6 +19,7 @@ namespace TwitterGraph.TwitterElements {
         public int cluster { get; set; }
         public List<string> mentionedIn { get; set; }
         public List<string> created { get; set; }
+        public bool process { get; set; }
 
         #endregion
 
@@ -41,6 +42,7 @@ namespace TwitterGraph.TwitterElements {
             this.id = id;
             this.name = name;
             this.radius = 15;
+            this.process = false;
             mentionedIn = new List<string>();
             created = new List<string>();
         }
